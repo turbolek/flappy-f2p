@@ -13,6 +13,8 @@ public class FlappyPlayer : MonoBehaviour {
 
 	public float waitDurationBeforeRestart = 3f;
 
+    AudioSource[] audioSources;
+
     public Rigidbody body {
         get;
         private set;
@@ -30,6 +32,7 @@ public class FlappyPlayer : MonoBehaviour {
     State state;
 
     void Awake() {
+        audioSources = GetComponents<AudioSource>();
         body = GetComponent<Rigidbody>();
         state = State.INTRO;
         inputAllowed = true;
@@ -50,6 +53,10 @@ public class FlappyPlayer : MonoBehaviour {
             case State.MOVING:
                 UpdateMoving();
                 ApplyAdditionalGravity();
+                if (!audioSources[0].isPlaying)
+                {
+                    audioSources[0].Play();
+                }
                 break;
             case State.DEAD:
                 ApplyAdditionalGravity();
@@ -102,6 +109,7 @@ public class FlappyPlayer : MonoBehaviour {
 		state = State.DEAD;
 		body.constraints = RigidbodyConstraints.None;
 		StartCoroutine( RestartAfterSeconds( waitDurationBeforeRestart ) );
+        audioSources[1].Play();
 	}
 
     void ApplyAdditionalGravity() {
